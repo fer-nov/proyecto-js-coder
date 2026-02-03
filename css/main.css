@@ -11,7 +11,7 @@ header {
     justify-content: space-between;
     padding: 3rem;
     /*background-color: #966767;*/
-    background-image: url("/assets/images/wood.jpg");
+    background-image: url("../assets/images/wood.jpg");
     background-size: cover;     /* hace que ocupe todo el espacio */
     background-position: center;
     background-repeat: no-repeat;
