@@ -10,48 +10,51 @@ cerrar.addEventListener("click", () => {
     nav.classList.remove("visible");
 })
 
-const pizzas = [
-  { id: 1, nombre: "Pizza Muzarella", precio: 15000 },
-  { id: 2, nombre: "Pizza Napolitana", precio: 16000 },
-  { id: 3, nombre: "Pizza Fugazzeta", precio: 18000 },
-  { id: 4, nombre: "Pizza especial", precio: 23000 },
-  { id: 5, nombre: "Pizza Jamaica", precio: 29000 },
-  { id: 6, nombre: "Pizza Madrileña", precio: 25000 },
-  { id: 7, nombre: "Pizza Mexicana", precio: 25000 },
-  { id: 8, nombre: "Pizza Munich", precio: 32000 },
-  { id: 9, nombre: "Pizza Palmitos", precio: 29000 },
-  { id: 10, nombre: "Pizza Pampeana", precio: 32000 },
-  { id: 11, nombre: "Pizza Peperoni", precio: 25000 },
-  { id: 12, nombre: "Pizza Primavera", precio: 25000 },
-  { id: 13, nombre: "Empanada Árabe", precio: 3500 },
-  { id: 14, nombre: "Empanada Cantimpalo", precio: 2500 },
-  { id: 15, nombre: "Empanada Caprese", precio: 2500 },
-  { id: 16, nombre: "Empanada Carne", precio: 3500 },
-  { id: 17, nombre: "Empanada Jamón y Muzza", precio: 2500 },
-  { id: 18, nombre: "Empanada Pollo", precio: 2500 },
-  { id: 19, nombre: "Empanada Queso y Cebolla", precio: 2500},
-  { id: 20, nombre: "Empanada Roq y Nuéz", precio: 2500 },
-  { id: 21, nombre: "Empanada Vacío", precio: 3500 },
-  { id: 22, nombre: "Empanada Osobuco", precio: 3500 },
-  { id: 23, nombre: "Empanada Salteña", precio: 1500 },
-  { id: 24, nombre: "Empanada Salteña Pollo", precio: 1500 }
-];
+
+
+fetch("/js/productos.json")
+  .then(Response => Response.json())
+  .then(data => {
+    productos = data;
+    cargarPedido(productos);
+  })
 
 let pedido = [];
 
 const botonesComida = document.querySelectorAll('.agregarP');
 const listaPedido = document.getElementById('lista-pedido');
 const totalHTML = document.getElementById('total-general');
+const botonComprar = document.getElementById('boton-comprar')
 
 botonesComida.forEach(boton => {
   boton.addEventListener('click', (e) => {
     e.preventDefault();
 
+    Toastify({
+        text: "Pedido agregado",
+        duration: 3000,
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: "linear-gradient(to right, #a0522d, #8b7bc9)",
+          borderRadius: "2rem",
+          textTransform: "uppercase",
+          fontSize: ".75rem"
+        },
+        offset: {
+            x: '1.5rem', // horizontal axis - can be a number or a string indicating unity. eg: '2em'
+            y: '1.5rem' // vertical axis - can be a number or a string indicating unity. eg: '2em'
+          },
+        onClick: function(){} // Callback after click
+      }).showToast();
+
     // agarro el div interno
     const card = boton.querySelector('div');
     const id = parseInt(card.id);
 
-    const producto = pizzas.find(p => p.id === id);
+    const producto = productos.find(p => p.id === id);
     if (!producto) return;
 
     const existente = pedido.find(p => p.id === id);
@@ -100,11 +103,39 @@ function renderPedido() {
     currency: 'ARS'
   });
 
+  // Dentro de renderPedido()
+if (pedido.length === 0) {
+    botonComprar.style.display = 'none';
+} else {
+    botonComprar.style.display = 'block';
+}
+
 }
 
 // Eliminar pedido
 listaPedido.addEventListener('click', (e) => {
   if (!e.target.classList.contains('btn-eliminar')) return;
+  //-----------------------------//
+  Toastify({
+        text: "Pedido eliminado",
+        duration: 3000,
+        close: true,
+        gravity: "top", // `top` or `bottom`
+        position: "right", // `left`, `center` or `right`
+        stopOnFocus: true, // Prevents dismissing of toast on hover
+        style: {
+          background: "linear-gradient(to right, #a0522d, #8b7bc9)",
+          borderRadius: "2rem",
+          textTransform: "uppercase",
+          fontSize: ".75rem"
+        },
+        offset: {
+            x: '1.5rem', // horizontal axis - can be a number or a string indicating unity. eg: '2em'
+            y: '1.5rem' // vertical axis - can be a number or a string indicating unity. eg: '2em'
+          },
+        onClick: function(){} // Callback after click
+      }).showToast();
+  //----------------------------//
 
   const id = parseInt(e.target.dataset.id);
   const producto = pedido.find(p => p.id === id);
@@ -148,4 +179,24 @@ function actualizarPedido() {
 }
 //
 actualizarPedido();
+
+botonComprar.addEventListener('click', () => {
+    
+    if (pedido.length === 0) {
+        Toastify({
+            text: "El carrito está vacío",
+            style: { background: "linear-gradient(to right, #ff5f6d, #ffc371)" }
+        }).showToast();
+        return;
+    }
+
+    Swal.fire({
+    title: "¡Compra confirmada!",
+    text: "Hemos recibido tu pedido correctamente.",
+    icon: "success",
+    confirmButtonColor: "#a0522d"
+    });
+
+    vaciarPedido(); 
+});
 

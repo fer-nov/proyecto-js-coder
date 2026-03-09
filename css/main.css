@@ -304,6 +304,10 @@ form input, form textarea {
   margin-top: 25px;
 }
 
+.btn-comprar {
+  padding: 10px 15px;
+}
+
 /* FOOTER */
 footer {
   background: #c1e2f7;
