@@ -12,7 +12,7 @@ cerrar.addEventListener("click", () => {
 
 
 
-fetch("./js/productos.json")
+fetch("../js/productos.json")
   .then(Response => Response.json())
   .then(data => {
     productos = data;
